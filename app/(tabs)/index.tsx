@@ -1,13 +1,22 @@
 import { createHomeStyles } from "@/assets/styles/home.style";
+import Header from "@/components/header";
+import TodoCard from "@/components/todoCard";
+import TodoInput from "@/components/todoInput";
 import useTheme from "@/hooks/useTheme";
-import React from "react";
-import { Pressable, StatusBar, Text } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useTodoStore } from "@/store/useTodosStore";
+
 import { LinearGradient } from "expo-linear-gradient";
+import React, { useEffect } from "react";
+import { StatusBar } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Index = () => {
-  const { colors, toggleDarkMode } = useTheme();
+  const { colors } = useTheme();
   const homeStyles = createHomeStyles(colors);
+  const { todos, loading, addTodo, hydrate } = useTodoStore();
+  useEffect(() => {
+    hydrate();
+  }, [hydrate]);
   return (
     <LinearGradient
       colors={colors.gradients.background}
@@ -15,10 +24,10 @@ const Index = () => {
     >
       <StatusBar barStyle={colors.statusBarStyle} />
       <SafeAreaView style={homeStyles.safeArea}>
-        <Text>Home</Text>
-        <Pressable onPress={toggleDarkMode}>
-          <Text>switch to dark</Text>
-        </Pressable>
+        <Header />
+        <TodoInput onAddTodo={addTodo} />
+        {!loading &&
+          todos.map((data) => <TodoCard key={data.id} data={data} />)}
       </SafeAreaView>
     </LinearGradient>
   );
