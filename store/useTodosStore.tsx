@@ -1,3 +1,4 @@
+import { sleep } from "@/helper/delay";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 
@@ -13,6 +14,9 @@ interface TodoStore {
   todos: Todo[];
   loading: boolean;
 
+  startLoading: () => void;
+  stopLoading: () => void;
+
   hydrate: () => Promise<void>;
   addTodo: (title: string) => Promise<void>;
   toggleTodo: (id: string) => Promise<void>;
@@ -22,18 +26,24 @@ interface TodoStore {
 
 export const useTodoStore = create<TodoStore>((set, get) => ({
   todos: [],
-  loading: true,
+  loading: false,
 
-  // 🔹 Load from storage
+  startLoading: () => set({ loading: true }),
+  stopLoading: () => set({ loading: false }),
+
   hydrate: async () => {
+    get().startLoading();
+
+    await sleep(1000);
     const data = await AsyncStorage.getItem(STORAGE_KEY);
+
     set({
       todos: data ? JSON.parse(data) : [],
-      loading: false,
     });
+
+    get().stopLoading();
   },
 
-  // 🔹 CREATE
   addTodo: async (title) => {
     if (!title.trim()) return;
 
@@ -45,20 +55,22 @@ export const useTodoStore = create<TodoStore>((set, get) => ({
 
     const updated = [newTodo, ...get().todos];
     set({ todos: updated });
+
+    await sleep(1000);
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
   },
 
-  // 🔹 TOGGLE STATUS
   toggleTodo: async (id) => {
     const updated = get().todos.map((todo) =>
       todo.id === id ? { ...todo, completed: !todo.completed } : todo,
     );
 
     set({ todos: updated });
+
+    await sleep(1000);
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
   },
 
-  // 🔹 EDIT TITLE (NEW)
   editTodo: async (id, title) => {
     if (!title.trim()) return;
 
@@ -67,13 +79,16 @@ export const useTodoStore = create<TodoStore>((set, get) => ({
     );
 
     set({ todos: updated });
+
+    await sleep(1000);
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
   },
 
-  // 🔹 DELETE
   deleteTodo: async (id) => {
     const updated = get().todos.filter((todo) => todo.id !== id);
     set({ todos: updated });
+
+    await sleep(1000);
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
   },
 }));

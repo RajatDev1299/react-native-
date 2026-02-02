@@ -1,5 +1,6 @@
 import { createHomeStyles } from "@/assets/styles/home.style";
 import Header from "@/components/header";
+import LoadingSpinner from "@/components/loadingSpinner";
 import TodoCard from "@/components/todoCard";
 import TodoInput from "@/components/todoInput";
 import useTheme from "@/hooks/useTheme";
@@ -17,6 +18,10 @@ const Index = () => {
   useEffect(() => {
     hydrate();
   }, [hydrate]);
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
   return (
     <LinearGradient
       colors={colors.gradients.background}

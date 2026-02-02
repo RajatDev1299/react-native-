@@ -1,5 +1,6 @@
 import { createHomeStyles } from "@/assets/styles/home.style";
 import useTheme from "@/hooks/useTheme";
+import { useTodoStore } from "@/store/useTodosStore";
 
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { LinearGradient } from "expo-linear-gradient";
@@ -13,15 +14,20 @@ interface TodoInputProps {
 
 const TodoInput = ({ onAddTodo }: TodoInputProps) => {
   const { colors } = useTheme();
-
+  const { startLoading, stopLoading } = useTodoStore();
   const homeStyle = createHomeStyles(colors);
   const [data, setData] = useState<string>("");
 
   const handleTodo = async () => {
-    if (!data.trim()) return;
+    try {
+      startLoading();
+      if (!data.trim()) return;
 
-    await onAddTodo(data.trim());
-    setData("");
+      await onAddTodo(data.trim());
+      setData("");
+    } finally {
+      stopLoading();
+    }
   };
 
   return (
