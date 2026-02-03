@@ -1,24 +1,50 @@
 import { createHomeStyles } from "@/assets/styles/home.style";
+import EmptyState from "@/components/emptyState";
 import Header from "@/components/header";
 import LoadingSpinner from "@/components/loadingSpinner";
-import TodoCard from "@/components/todoCard";
+import TodoItem from "@/components/todoCard";
 import TodoInput from "@/components/todoInput";
 import useTheme from "@/hooks/useTheme";
-import { useTodoStore } from "@/store/useTodosStore";
+import { Todo, useTodoStore } from "@/store/useTodosStore";
 
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useEffect } from "react";
-import { StatusBar } from "react-native";
+import React, { useCallback, useEffect } from "react";
+import { Alert, FlatList, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Index = () => {
   const { colors } = useTheme();
   const homeStyles = createHomeStyles(colors);
-  const { todos, loading, addTodo, hydrate } = useTodoStore();
+  const todos = useTodoStore((s) => s.todos);
+  const loading = useTodoStore((s) => s.loading);
+  const addTodo = useTodoStore((s) => s.addTodo);
+  const hydrate = useTodoStore((s) => s.hydrate);
+  const toggleTodo = useTodoStore((s) => s.toggleTodo);
+  const deleteTodo = useTodoStore((s) => s.deleteTodo);
+
+  const handleDeleteTodo = async (id: string) => {
+    Alert.alert("Delete Todo", "Are you sure you want to delete this todo?", [
+      { text: "Cancel", style: "cancel" },
+      { text: "Delete", style: "destructive", onPress: () => deleteTodo(id) },
+    ]);
+  };
+
   useEffect(() => {
     hydrate();
   }, [hydrate]);
 
+  const renderItem = useCallback(
+    ({ item }: { item: Todo }) => (
+      <TodoItem
+        item={item}
+        styles={homeStyles}
+        colors={colors}
+        onToggle={toggleTodo}
+        onDelete={handleDeleteTodo}
+      />
+    ),
+    [toggleTodo, deleteTodo],
+  );
   if (loading) {
     return <LoadingSpinner />;
   }
@@ -31,8 +57,14 @@ const Index = () => {
       <SafeAreaView style={homeStyles.safeArea}>
         <Header />
         <TodoInput onAddTodo={addTodo} />
-        {!loading &&
-          todos.map((data) => <TodoCard key={data.id} data={data} />)}
+        <FlatList
+          data={todos}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          extraData={todos}
+          contentContainerStyle={homeStyles.todoListContent}
+          ListEmptyComponent={<EmptyState />}
+        />
       </SafeAreaView>
     </LinearGradient>
   );
