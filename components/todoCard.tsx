@@ -11,6 +11,7 @@ interface TodoItemProps {
   colors: any;
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
+  onEdit: (item: Todo) => void;
 }
 
 const TodoItem: React.FC<TodoItemProps> = ({
@@ -19,6 +20,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
   colors,
   onToggle,
   onDelete,
+  onEdit,
 }) => {
   return (
     <View style={styles.todoItemWrapper}>
@@ -59,7 +61,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
             {item.title}
           </Text>
           <View style={styles.todoActions}>
-            <TouchableOpacity onPress={() => {}} activeOpacity={0.8}>
+            <TouchableOpacity onPress={() => onEdit(item)} activeOpacity={0.8}>
               <LinearGradient
                 colors={colors.gradients.warning}
                 style={styles.actionButton}

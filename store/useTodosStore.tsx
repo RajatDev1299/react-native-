@@ -12,7 +12,8 @@ export interface Todo {
 interface TodoStore {
   todos: Todo[];
   loading: boolean;
-
+  isEdit: Todo | null;
+  setTodoItem: (item: Todo | null) => void;
   startLoading: () => void;
   stopLoading: () => void;
   hydrate: () => Promise<void>;
@@ -26,6 +27,7 @@ interface TodoStore {
 export const useTodoStore = create<TodoStore>((set, get) => ({
   todos: [],
   loading: false,
+  isEdit: null,
   hydrate: async () => {
     get().startLoading();
 
@@ -35,6 +37,9 @@ export const useTodoStore = create<TodoStore>((set, get) => ({
     get().stopLoading();
   },
 
+  setTodoItem: (item) => {
+    set({ isEdit: item });
+  },
   startLoading: () => set({ loading: true }),
   stopLoading: () => set({ loading: false }),
 

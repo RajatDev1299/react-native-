@@ -21,7 +21,9 @@ const Index = () => {
   const hydrate = useTodoStore((s) => s.hydrate);
   const toggleTodo = useTodoStore((s) => s.toggleTodo);
   const deleteTodo = useTodoStore((s) => s.deleteTodo);
-
+  const setTodoItem = useTodoStore((s) => s.setTodoItem);
+  const isEdit = useTodoStore((s) => s.isEdit);
+  console.log(isEdit);
   const handleDeleteTodo = async (id: string) => {
     Alert.alert("Delete Todo", "Are you sure you want to delete this todo?", [
       { text: "Cancel", style: "cancel" },
@@ -41,6 +43,7 @@ const Index = () => {
         colors={colors}
         onToggle={toggleTodo}
         onDelete={handleDeleteTodo}
+        onEdit={setTodoItem}
       />
     ),
     [toggleTodo, deleteTodo],
