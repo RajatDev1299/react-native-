@@ -25,7 +25,6 @@ const DangerZone = () => {
             try {
               clearTodos();
             } catch (error) {
-              console.log("Error deleting all todos", error);
               Alert.alert("Error", "Failed to reset app");
             }
           },

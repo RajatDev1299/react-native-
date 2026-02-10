@@ -23,7 +23,7 @@ const Index = () => {
   const deleteTodo = useTodoStore((s) => s.deleteTodo);
   const setTodoItem = useTodoStore((s) => s.setTodoItem);
   const isEdit = useTodoStore((s) => s.isEdit);
-  console.log(isEdit);
+
   const handleDeleteTodo = async (id: string) => {
     Alert.alert("Delete Todo", "Are you sure you want to delete this todo?", [
       { text: "Cancel", style: "cancel" },
