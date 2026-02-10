@@ -39,8 +39,6 @@ const Index = () => {
     ({ item }: { item: Todo }) => (
       <TodoItem
         item={item}
-        styles={homeStyles}
-        colors={colors}
         onToggle={toggleTodo}
         onDelete={handleDeleteTodo}
         onEdit={setTodoItem}

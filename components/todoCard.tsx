@@ -3,12 +3,13 @@ import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
+import { createHomeStyles } from "@/assets/styles/home.style";
+import useTheme from "@/hooks/useTheme";
 import { Todo } from "@/store/useTodosStore";
 
 interface TodoItemProps {
   item: Todo;
-  styles: any;
-  colors: any;
+
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
   onEdit: (item: Todo) => void;
@@ -16,12 +17,13 @@ interface TodoItemProps {
 
 const TodoItem: React.FC<TodoItemProps> = ({
   item,
-  styles,
-  colors,
+
   onToggle,
   onDelete,
   onEdit,
 }) => {
+  const { colors } = useTheme();
+  const styles = createHomeStyles(colors);
   return (
     <View style={styles.todoItemWrapper}>
       <LinearGradient colors={colors.gradients.surface} style={styles.todoItem}>
